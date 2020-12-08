@@ -10,18 +10,18 @@ def process_song_file(cur,filepath):
     df = pd.read_json(filepath,lines=True)
 
     # insert song record
-    song_data = files_df[["song_id","title","artist_id","year","duration"]].values[0]
+    song_data = df[["song_id","title","artist_id","year","duration"]].values[0]
     cur.execute(song_table_insert, song_data)
     
     # insert artist record
-    artist_data = files_df[["artist_id","artist_name","artist_location","artist_latitude","artist_longitude"]].values[0]
+    artist_data = df[["artist_id","artist_name","artist_location","artist_latitude","artist_longitude"]].values[0]
     cur.execute(artist_table_insert, artist_data)
 
 
 def process_log_file(cur,filepath):
     
     # open log file
-    df = pd.read_json(log_files,lines=True)
+    df = pd.read_json(filepath,lines=True)
 
     # filter by NextSong action
     df = df[(df.page == "NextSong")]
@@ -41,10 +41,7 @@ def process_log_file(cur,filepath):
         cur.execute(time_table_insert, list(row))
 
     # load user table
-    #users = process_data(filepath)
-    #filepath = users[0]
-    #users_data = pd.read_json(filepath,lines=True)
-    user_df = users_data[["userId","firstName","lastName","gender","level"]]
+    user_df = df[["userId","firstName","lastName","gender","level"]]
 
     # insert user records
     for i, row in user_df.iterrows():

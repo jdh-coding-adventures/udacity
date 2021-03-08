@@ -13,12 +13,17 @@ from helpers import SqlQueries
 default_args = {
     'owner': 'udacity',
     'start_date': datetime(2019, 1, 12),
+    'depends_on_past':False,
+    'retries': 1,
+    'retry_delay': timedelta(minutes=5),
+    'email_on_retry': False
 }
 
 dag = DAG('udac_example_dag',
           default_args=default_args,
           description='Load and transform data in Redshift with Airflow',
-          schedule_interval='0 * * * *'
+          schedule_interval='0 * * * *',
+          catchup=False
         )
 
 #start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
@@ -81,7 +86,8 @@ load_time_dimension_table = LoadDimensionOperator(
 
 run_quality_checks = DataQualityOperator(
     task_id='Run_data_quality_checks',
-    dag=dag
+    dag=dag,
+    tables=["public.users","public.songs","public.artists","public.songplays","public.time"]
 )
 
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)

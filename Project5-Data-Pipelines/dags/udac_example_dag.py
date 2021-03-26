@@ -16,7 +16,8 @@ default_args = {
     'depends_on_past':False,
     'retries': 1,
     'retry_delay': timedelta(minutes=5),
-    'email_on_retry': False
+    'email_on_retry': False,
+   # 'catchup': False
 }
 
 dag = DAG('udac_example_dag',
@@ -53,35 +54,40 @@ load_songplays_table = LoadFactOperator(
     task_id='Load_songplays_fact_table',
     dag=dag,
     table="public.songplays",
-    sql_songplay_table_insert=SqlQueries.songplay_table_insert
+    sql_songplay_table_insert=SqlQueries.songplay_table_insert,
+    append_data=True
 )
 
 load_user_dimension_table = LoadDimensionOperator(
     task_id='Load_user_dim_table',
     dag=dag,
     table="public.users",
-    sql_dim_table_insert=SqlQueries.user_table_insert
+    sql_dim_table_insert=SqlQueries.user_table_insert,
+    append_data=True
 )
 
 load_song_dimension_table = LoadDimensionOperator(
     task_id='Load_song_dim_table',
     dag=dag,
     table="public.songs",
-    sql_dim_table_insert=SqlQueries.song_table_insert
+    sql_dim_table_insert=SqlQueries.song_table_insert,
+    append_data=True
 )
 
 load_artist_dimension_table = LoadDimensionOperator(
     task_id='Load_artist_dim_table',
     dag=dag,
     table="public.artists",
-    sql_dim_table_insert=SqlQueries.artist_table_insert
+    sql_dim_table_insert=SqlQueries.artist_table_insert,
+    append_data=True
 )
 
 load_time_dimension_table = LoadDimensionOperator(
     task_id='Load_time_dim_table',
     dag=dag,
     table='public."time"',
-    sql_dim_table_insert=SqlQueries.time_table_insert
+    sql_dim_table_insert=SqlQueries.time_table_insert,
+    append_data=True
 )
 
 run_quality_checks = DataQualityOperator(

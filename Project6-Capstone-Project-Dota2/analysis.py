@@ -5,6 +5,11 @@ from etl import match_summary_destination_path, chat_destination_path
 from analysis_queries import get_total_toxic_matches, get_total_toxic_players, get_most_toxic_region
 
 def main():
+    """
+    This is the main function and will execute all queries in the analysis_queries.py helper script.
+    It starts by reading the match summary data, where we have chat data as well, into a dataframe,
+    and analysing the data from the dataframe.
+    """
     
     #create spark session
     spark = create_spark_session()

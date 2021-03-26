@@ -3,20 +3,28 @@ import pyspark.sql.functions as F
 from pyspark.sql.functions import udf
 
 def create_spark_session():
-
+    """
+    This function creaes a new spark session. 
+    """
     spark = (SparkSession.builder.
         config("spark.jars.packages","saurfang:spark-sas7bdat:2.0.0-s_2.11")
         .enableHiveSupport().getOrCreate()
     )
-    #df_spark =spark.read.format('com.github.saurfang.sas.spark').load('../../data/18-83510-I94-Data-2016/i94_apr16_sub.sas7bdat')
 
     return spark
 
 def process_data_frame(destination_file_path: str,
-                                join_column_name: str,
-                                partition_column_name: str,
-                                spark: SparkSession,
-                                renamed_df: DataFrame):
+                        join_column_name: str,
+                        partition_column_name: str,
+                        spark: SparkSession,
+                        renamed_df: DataFrame):
+    """
+    This function is used to process the csv files
+    It first checks if the destination already exists. If not it will create it, and if it does exist, it will just append the new data.
+    No data will be overwritten, so it is safe to run this function as many times with the same data as you want.
+    """
+    
+    destination_data = destination_file_path.split("/")[-1]
     
     try:
         existing_data = spark.read.parquet(destination_file_path).select(F.col(join_column_name)).distinct()
@@ -33,22 +41,26 @@ def process_data_frame(destination_file_path: str,
                                 .select("new.*")
                      )
     
-        print("Processing " + str(renamed_df.count()) + " new rows.")
+        print("Processing " + str(renamed_df.count()) + f" new rows for {destination_data}.")
         renamed_df.write.format("parquet").mode("append").partitionBy(partition_column_name).save(destination_file_path)
               
     else:
-        print("Processing complete csv file, " + str(renamed_df.count()) + " rows.")
+        print(f"Processing complete csv file for {destination_data}, " + str(renamed_df.count()) + " rows.")
         renamed_df.write.format("parquet").mode("overwrite").partitionBy(partition_column_name).save(destination_file_path)
         
         
-
 @udf()
 def get_toxic(chat):
+    """
+    This function determines if a chat is toxic or not.
+    It uses the list of bad words below, loops through it and checks if any of them exist in the chat.add()
+    It does not require an exact match to flag the word, for example it will flag arsehole because arse is in the list.
+    """
     if chat is None:
         chat = "g"
     flag_words = (["fuck","shit","piss","dick","ass","arse","bitch","bastard","cunt","shag","wank"
                    ,"toss","vagi","twat","root","bugger","ez","noob","moron","retard","idiot","poes"
-                  ,"doos","kont","donner","moer","bliksem"]
+                  ,"doos","kont","donner","moer","bliksem","puss","hoer","slet"]
                  )
     toxic = [flag_word for flag_word in flag_words if(flag_word in chat)]
     return len(toxic)

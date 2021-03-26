@@ -20,8 +20,6 @@ match_summary_destination_path = "./dota2/match_summary_data"
 date_processed = datetime.now()
 
 
-
-
 def process_chat_data(chat_source_path:str 
                       ,chat_destination_path: str
                       ,spark: SparkSession):
@@ -132,6 +130,15 @@ def process_match_summary(match_destination_path:str,
                         match_summary_destination_path: str,
                         spark: SparkSession
                           ):
+    """
+    This function uses data from the match, chat and region data that have already been written to parquet format.
+    In here we read only the columns from each data set, combine them into one and the use a window function to get the aggregate details to enable us to answer
+    questions we wanted to answer about how toxic the environment is:
+        - We get a distinct count of matches that contain toxic language to see how many games are toxic.
+        - We get a total count of toxic comments per metch.
+        - We get the total count of toxic players per game.
+        - We get the total toxic games per region.
+    """
     
     try:
     
@@ -209,6 +216,10 @@ def process_match_summary(match_destination_path:str,
 
 def main():
     
+    """
+    This is the main function that will run the etl process as well as the data quality checks.
+    """
+    
     #create spark session
     spark = create_spark_session()
     
@@ -245,31 +256,27 @@ def main():
                       date_processed=date_processed)
     
     #check for chats where we do not have the match data
-    check = get_orphaned_records(source_destination_path=chat_destination_path,
+    get_orphaned_records(source_destination_path=chat_destination_path,
                                 target_destination_path=match_destination_path,
                                 source_column_name="match_id",
                                 target_column_name="match_id",
                                 spark=spark)
     
-    if check != "Success":
-        return
     
     #check for regions in the match data that do not exist in the region data
-    check = get_orphaned_records(source_destination_path=match_destination_path,
+    get_orphaned_records(source_destination_path=match_destination_path,
                                 target_destination_path=region_destination_path,
                                 source_column_name="cluster_id",
                                 target_column_name="cluster_id",
                                 spark=spark)
         
-    if check != "Success":
-        return
     
     #check for matches that we do not have chats for
-    check = get_orphaned_records(source_destination_path=match_destination_path,
-                            target_destination_path=chat_destination_path,
-                            source_column_name="match_id",
-                            target_column_name="match_id",
-                            spark=spark)
+    get_orphaned_records(source_destination_path=match_destination_path,
+                                target_destination_path=chat_destination_path,
+                                source_column_name="match_id",
+                                target_column_name="match_id",
+                                spark=spark)
     
     ########################
     ## LOAD MATCH SUMMARY ##
@@ -281,10 +288,6 @@ def main():
                         match_summary_destination_path=match_summary_destination_path,
                         spark=spark
                           )
-    
-    
-    
-    
     
 
 if __name__ == "__main__":

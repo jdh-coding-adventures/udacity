@@ -255,30 +255,33 @@ These functions are explained in the previous section in numbers 5,6 and 7 respe
 #### 4. Data Dictionary
 
 **chat.csv**
-match_id - This is just a bigint and uniquely identifies the match
-key - This is the actual chat string. This will be renamed to chat
-slot - This is the position of slot for the player, it can be 0 - 9 since there are 10 players in a game.
-time - This is the time in seconds into the game, and will be renamed to time_in_seconds
-unit - This is the name of the player, and it will be renamed to player
+
+1. match_id - This is just a bigint and uniquely identifies the match
+2. key - This is the actual chat string. This will be renamed to chat
+3. slot - This is the position of slot for the player, it can be 0 - 9 since there are 10 players in a game.
+4. time - This is the time in seconds into the game, and will be renamed to time_in_seconds
+5. unit - This is the name of the player, and it will be renamed to player
 
 **cluster_region.csv**
-cluster - This is an integer column, and is it is the cluster id. This will be renamed to cluster_id
-region - This is the name of the region.
+
+1. cluster - This is an integer column, and is it is the cluster id. This will be renamed to cluster_id
+2. region - This is the name of the region.
 
 **match.csv**
-match_id - This is just a bigint and uniquely identifies the match
-start_time - This is a big int, and it is a unix timestamp. This will be converted to a spark timestamp.
-duration - This is an int field, and shows the duration of the match in seconds, and will be renamed to duration_in_seconds
-tower_status_radiant - A particular teams tower status is given as a 16-bit unsigned integer. The rightmost 11 bits represent individual towers belonging to that team; see below for a visual representation.
-tower_status_dire - A particular teams tower status is given as a 16-bit unsigned integer. The rightmost 11 bits represent individual towers belonging to that team; see below for a visual representation.
-barracks_status_dire - A particular teams tower status is given as an 8-bit unsigned integer. The rightmost 6 bits represent the barracks belonging to that team; see below for a visual representation.
-barracks_status_radiant - A particular teams tower status is given as an 8-bit unsigned integer. The rightmost 6 bits represent the barracks belonging to that team; see below for a visual representation.
-first_blood_time - Time in seconds of when the first hero died in a match
-game_mode - The mode the game is played e.g All pick, Turbo, Random Draft etc
-radiant_win - Boolean value to say which side won the match
-negative_votes - The number of thumbs-down the game has received by users
-positive_votes - The number of thumbs-up the game has received by users
-cluster - The cluster id the game was played on. This will be renamed to cluster id
+
+1. match_id - This is just a bigint and uniquely identifies the match
+2. start_time - This is a big int, and it is a unix timestamp. This will be converted to a spark timestamp.
+3. duration - This is an int field, and shows the duration of the match in seconds, and will be renamed to duration_in_seconds
+4. tower_status_radiant - A particular teams tower status is given as a 16-bit unsigned integer. The rightmost 11 bits represent individual towers belonging to that team; see below for a visual representation.
+5. tower_status_dire - A particular teams tower status is given as a 16-bit unsigned integer. The rightmost 11 bits represent individual towers belonging to that team; see below for a visual representation.
+6. barracks_status_dire - A particular teams tower status is given as an 8-bit unsigned integer. The rightmost 6 bits represent the barracks belonging to that team; see below for a visual representation.
+7. barracks_status_radiant - A particular teams tower status is given as an 8-bit unsigned integer. The rightmost 6 bits represent the barracks belonging to that team; see below for a visual representation.
+8. first_blood_time - Time in seconds of when the first hero died in a match
+9. game_mode - The mode the game is played e.g All pick, Turbo, Random Draft etc
+10. radiant_win - Boolean value to say which side won the match
+11. negative_votes - The number of thumbs-down the game has received by users
+12. positive_votes - The number of thumbs-up the game has received by users
+13. cluster - The cluster id the game was played on. This will be renamed to cluster id
 
 A link for a more in depth description of match data - https://wiki.teamfortress.com/wiki/WebAPI/GetMatchDetails#Tower_Status
 

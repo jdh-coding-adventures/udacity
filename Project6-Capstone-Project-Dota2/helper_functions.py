@@ -1,6 +1,7 @@
 from pyspark.sql import SparkSession, DataFrame
 import pyspark.sql.functions as F
 from pyspark.sql.functions import udf
+from toxic_words import toxic_words_list
 
 def create_spark_session():
     """
@@ -58,9 +59,6 @@ def get_toxic(chat):
     """
     if chat is None:
         chat = "g"
-    flag_words = (["fuck","shit","piss","dick","ass","arse","bitch","bastard","cunt","shag","wank"
-                   ,"toss","vagi","twat","root","bugger","ez","noob","moron","retard","idiot","poes"
-                  ,"doos","kont","donner","moer","bliksem","puss","hoer","slet"]
-                 )
+    flag_words = toxic_words_list
     toxic = [flag_word for flag_word in flag_words if(flag_word in chat)]
     return len(toxic)
